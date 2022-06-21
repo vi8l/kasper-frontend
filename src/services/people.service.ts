@@ -8,7 +8,7 @@ class PeopleDataService {
     return http.get<IPersonData>(`/people/${id}`);
   }
   create(data: { [key: string]: any }) {
-    return http.post<IPersonData>("/people", data);
+    return http.post<any>("/people", data);
   }
   update(data: IPersonData, id: any) {
     return http.put<any>(`/people/${id}`, data);

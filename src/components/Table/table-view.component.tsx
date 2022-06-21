@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, MenuOutlined } from "@ant-design/icons";
-import { Button, Space, Table, Popconfirm } from "antd";
+import { Button, message, Space, Table, Popconfirm } from "antd";
 import { arrayMoveImmutable } from "array-move";
 import { useState, useEffect } from "react";
 import "./style.css";
@@ -11,6 +11,14 @@ import {
 import AddModalComponent from "../modals/add-modal.component";
 import PeopleDataService from "../../services/people.service";
 import IPersonData from "../../types/person.type";
+
+const successMessage = (messageText: string) => {
+  message.success(messageText, 5);
+};
+
+const errorMessage = (messageText: string) => {
+  message.error(messageText, 5);
+};
 
 const DragHandle = SortableHandle(() => (
   <MenuOutlined
@@ -128,27 +136,42 @@ const TableViewComponent = () => {
   };
 
   const handleSave = async (name: string, id?: number) => {
-    if (id) {
-      const newData = [...dataSource];
-      let record: IPersonData | undefined;
-      newData.map((item: IPersonData) => {
-        if (item.id === id) {
-          item.name = name;
-          record = { ...item };
-          return { ...item };
-        } else {
-          return item;
+    try {
+      if (id) {
+        const newData = [...dataSource];
+        let record: IPersonData | undefined;
+        newData.map((item: IPersonData) => {
+          if (item.id === id) {
+            item.name = name;
+            record = { ...item };
+            return { ...item };
+          } else {
+            return item;
+          }
+        });
+        if (record) {
+          const result = await PeopleDataService.update(record, record!.id);
+          if (result?.data?.httpStatus === 200) {
+            setDataSource(newData);
+            successMessage(result?.data?.message);
+          } else {
+            errorMessage("Failed to save data, please try again.");
+          }
         }
-      });
-      setDataSource(newData);
-      if (record) {
-        await PeopleDataService.update(record, record!.id);
+      } else {
+        const result = await PeopleDataService.create({ name: name });
+        if (result?.data?.httpStatus === 200) {
+          successMessage(result?.data?.message);
+        } else {
+          errorMessage("Failed to save data, please try again.");
+        }            
+        await retriveData();
       }
-    } else {
-      await PeopleDataService.create({ name: name });
-      await retriveData();
+      handleHideModal();
+    } catch (error) {
+      console.log("Error::", error);
+      errorMessage("Failed to save data, please try again.");
     }
-    handleHideModal();
   };
 
   const handleReorder = async (newData: IPersonData[], newIndex: number) => {
@@ -162,11 +185,21 @@ const TableViewComponent = () => {
   };
 
   const handleDelete = async (record: IPersonData) => {
-    const newData = dataSource.filter(
-      (item: IPersonData) => item.id !== record.id
-    );
-    await PeopleDataService.delete(record.id!);
-    setDataSource(newData);
+    try {
+      const newData = dataSource.filter(
+        (item: IPersonData) => item.id !== record.id
+      );
+      const result = await PeopleDataService.delete(record.id!);
+      if (result?.data?.httpStatus === 200) {
+        setDataSource(newData);
+        successMessage(result?.data?.message);
+      } else {
+        errorMessage("Failed to save data, please try again.");
+      }
+    } catch (error) {
+      console.log("Error::", error);
+      errorMessage("Failed to save data, please try again.");
+    }
   };
 
   return (
