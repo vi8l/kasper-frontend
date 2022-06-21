@@ -171,7 +171,6 @@ const TableViewComponent = () => {
 
   return (
     <div>
-      {/* <Space> */}
       <Button
         type="primary"
         onClick={() => handleShowModel()}
@@ -179,7 +178,6 @@ const TableViewComponent = () => {
       >
         Add Person
       </Button>
-      {/* </Space> */}
       <AddModalComponent
         showModal={isModalVisible}
         handleHideModal={handleHideModal}

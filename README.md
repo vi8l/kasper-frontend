@@ -1,6 +1,16 @@
-# Getting Started with Create React App
+# Kasper Frontend 
+This is UI part of assignment to show Peoples table with CRUD operations and reordering rows;
+Stack was expected to be REACT/NODE/TS/MYSQL
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Setup App locally
+
+### Requirements
+NPM, Create react app
+
+### clone 
+git@github.com:vi8l/kasper-frontend.git
+
+run `npm i` to install dependencies 
 
 ## Available Scripts
 
