@@ -40,6 +40,7 @@ const TableViewComponent = () => {
   const [dataSource, setDataSource] = useState<IPersonData[]>([]);
   const [updateRecord, setUpdateRecord] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [forceReload, setForceReload] = useState(false);
 
   const retriveData = async () => {
     try {
@@ -49,9 +50,15 @@ const TableViewComponent = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     retriveData();
   }, []);
+
+  if (forceReload) {
+    setForceReload(false);
+    retriveData();
+  }
 
   const columns = [
     {
@@ -64,6 +71,11 @@ const TableViewComponent = () => {
     {
       title: "Name",
       dataIndex: "name",
+      className: "drag-visible",
+    },
+    {
+      title: "Rank",
+      dataIndex: "sequence",
       className: "drag-visible",
     },
     {
@@ -88,7 +100,6 @@ const TableViewComponent = () => {
         oldIndex,
         newIndex
       ).filter((el) => !!el);
-      setDataSource(newData);
       handleReorder(newData, newIndex);
     }
   };
@@ -164,7 +175,7 @@ const TableViewComponent = () => {
           successMessage(result?.data?.message);
         } else {
           errorMessage("Failed to save data, please try again.");
-        }            
+        }
         await retriveData();
       }
       handleHideModal();
@@ -175,13 +186,36 @@ const TableViewComponent = () => {
   };
 
   const handleReorder = async (newData: IPersonData[], newIndex: number) => {
-    const id = newData[newIndex]?.id;
-    const payload = {
-      prevSequenceNumber: newData[newIndex - 1]?.sequence,
-      nextSequenceNumber: newData[newIndex + 1]?.sequence,
-      name: newData[newIndex]?.name,
-    };
-    await PeopleDataService.updateOrder(payload, id);
+    try {
+      const id = newData[newIndex]?.id;
+      const payload = {
+        prevSequenceNumber: newData[newIndex - 1]?.sequence,
+        nextSequenceNumber: newData[newIndex + 1]?.sequence,
+        name: newData[newIndex]?.name,
+      };
+      const result = await PeopleDataService.updateOrder(payload, id);
+      if (result?.data?.httpStatus === 200) {
+        const currentSequence = PeopleDataService.getNewSquenceNumber(
+          newData,
+          newIndex
+        );
+        newData[newIndex].sequence = currentSequence;
+        setDataSource(newData);
+        setForceReload(
+          PeopleDataService.reorderPeopleSequence(
+            currentSequence,
+            payload.prevSequenceNumber,
+            payload.nextSequenceNumber
+          )
+        );
+      } else {
+        errorMessage("Failed to save data, please try again.");
+        setForceReload(true);
+      }
+    } catch (error) {
+      errorMessage("Failed to save data, please try again.");
+      setForceReload(true);
+    }
   };
 
   const handleDelete = async (record: IPersonData) => {
@@ -197,7 +231,6 @@ const TableViewComponent = () => {
         errorMessage("Failed to save data, please try again.");
       }
     } catch (error) {
-      console.log("Error::", error);
       errorMessage("Failed to save data, please try again.");
     }
   };
