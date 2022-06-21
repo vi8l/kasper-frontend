@@ -2,7 +2,7 @@ import "antd/dist/antd.css";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import TableView from "./components/Table/table-view";
+import TableViewComponent from "./components/Table/table-view.component";
 
 const App = () => {
   return (
@@ -12,7 +12,7 @@ const App = () => {
           Home
         </Link>
       </nav>
-      <TableView />
+      <TableViewComponent />
     </div>
   );
 };

@@ -13,6 +13,7 @@
     "@types/react-router-dom": "^5.3.3",
     "antd": "^4.21.3",
     "array-move": "^4.0.0",
+    "axios": "^0.27.2",
     "bootstrap": "^4.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
