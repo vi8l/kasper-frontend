@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/kasper-frontend/static/css/main.0e618663.css",
+    "main.js": "/kasper-frontend/static/js/main.7f5014e2.js",
+    "static/js/787.d22a26b9.chunk.js": "/kasper-frontend/static/js/787.d22a26b9.chunk.js",
+    "index.html": "/kasper-frontend/index.html",
+    "main.0e618663.css.map": "/kasper-frontend/static/css/main.0e618663.css.map",
+    "main.7f5014e2.js.map": "/kasper-frontend/static/js/main.7f5014e2.js.map",
+    "787.d22a26b9.chunk.js.map": "/kasper-frontend/static/js/787.d22a26b9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0e618663.css",
+    "static/js/main.7f5014e2.js"
+  ]
+}
