@@ -13,10 +13,16 @@ import PeopleDataService from "../../services/people.service";
 import IPersonData from "../../types/person.type";
 
 const successMessage = (messageText: string) => {
+  message.destroy();
   message.success(messageText, 5);
 };
 
+const loader = (loaderText: string) => {
+  message.loading(loaderText);
+}
+
 const errorMessage = (messageText: string) => {
+  message.destroy();
   message.error(messageText, 5);
 };
 
@@ -161,6 +167,7 @@ const TableViewComponent = () => {
           }
         });
         if (record) {
+          loader("Saving change, Please wait..!")
           const result = await PeopleDataService.update(record, record!.id);
           if (result?.data?.httpStatus === 200) {
             setDataSource(newData);
@@ -170,6 +177,7 @@ const TableViewComponent = () => {
           }
         }
       } else {
+        loader("Saving change, Please wait..!")
         const result = await PeopleDataService.create({ name: name });
         if (result?.data?.httpStatus === 200) {
           successMessage(result?.data?.message);
@@ -209,11 +217,11 @@ const TableViewComponent = () => {
           )
         );
       } else {
-        errorMessage("Failed to save data, please try again.");
+        errorMessage("Failed to save changes, please try again.");
         setForceReload(true);
       }
     } catch (error) {
-      errorMessage("Failed to save data, please try again.");
+      errorMessage("Failed to save changes, please try again.");
       setForceReload(true);
     }
   };
